@@ -16,7 +16,7 @@ function App() {
             <Link to="/">List Users</Link>
           </li>
           <li>
-            <Link to="user/create">List Users</Link>
+            <Link to="user/create">Create User</Link>
           </li>
         </ul>
         </nav>
