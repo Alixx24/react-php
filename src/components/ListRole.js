@@ -19,7 +19,7 @@ export default function ListRole() {
                     </tr>
                 </thead>
                 <tbody>
-               
+
                 </tbody>
             </table>
         </>
