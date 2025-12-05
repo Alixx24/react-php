@@ -38,16 +38,16 @@ export default function ListUser() {
     <div className="container">
 
       <h2 className="my-4 text-center">List Users</h2>
- <form className="d-flex" onSubmit={handleSearch}>
-                <input
-                  className="form-control me-2"
-                  type="search"
-                  placeholder="Search..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-                <button className="btn btn-light" type="submit">Search</button>
-              </form>
+      <form className="d-flex" onSubmit={handleSearch}>
+        <input
+          className="form-control me-2"
+          type="search"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <button className="btn btn-light" type="submit">Search</button>
+      </form>
       <div className="card shadow-sm">
         <div className="card-body">
 
@@ -63,7 +63,7 @@ export default function ListUser() {
             </thead>
 
             <tbody>
-             
+
               {users.map((user, key) => (
                 <tr key={key}>
                   <td>{user.id}</td>
