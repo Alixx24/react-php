@@ -3,99 +3,83 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 
 export default function ListUser() {
-
   const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    getUsers();
-  }, []);
-
-  function getUsers() {
-    axios.get('http://localhost/php-for/')
-      .then((response) => {
-        console.log(response.data);
-        setUsers(response.data);
-      });
-  }
-
-  const deleteUser = (id) => {
-    axios.delete(`http://localhost/php-for/${id}/delete`).then(function (response) {
-      console.log(response.data);
-      getUsers();
-    });
-  }
-
   const [search, setSearch] = useState("");
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    fetch(`http://localhost/php-for/?search=${search}`)
-      .then(res => res.json())
-      .then(data => setUsers(data))
-  }
+  useEffect(() => {
+    const url = search.trim()
+      ? `http://127.0.0.1:8000/api/user-search?search=${search}`
+      : `http://127.0.0.1:8000/api/user-list`;
+
+    axios
+      .get(url)
+      .then((res) => setUsers(res.data.data))
+      .catch((err) => console.log(err));
+  }, [search]); // تغییر سرچ باعث اجرای دوباره می‌شود
+
+  //delete function
+  const handleDelete = (id) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+    axios
+      .delete(`http://127.0.0.1:8000/api/user/${id}`)
+      .then(() => {
+        //refresh list after delete
+        setUsers(users.filter(user => user.id !== id));
+      })
+      .catch(err => console.log(err));
+  };
 
   return (
     <div className="container">
-
       <h2 className="my-4 text-center">List Users</h2>
-      <form className="d-flex" onSubmit={handleSearch}>
-        <input
-          className="form-control me-2"
-          type="search"
-          placeholder="Search..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <button className="btn btn-light" type="submit">Search</button>
-      </form>
-      <div className="card shadow-sm">
-        <div className="card-body">
 
-          <table className="table table-bordered table-hover align-middle">
-            <thead className="table-primary">
-              <tr>
-                <th style={{ width: "60px" }}>#</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Mobile</th>
-                <th style={{ width: "160px" }}>Actions</th>
+      {/* Search Input */}
+      <input
+        type="text"
+        placeholder="Search users..."
+        className="form-control mb-3"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <table className="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th><th>Name</th><th>Email</th><th>Mobile</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.length > 0 ? (
+            users.map((user) => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.mobile}</td>
+                <td>
+                  <Link to={`/user/${user.id}/edit`} className="btn btn-warning btn-sm">
+                    Edit
+                  </Link>
+                  {" "}
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDelete(user.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-
-              {users.map((user, key) => (
-                <tr key={key}>
-                  <td>{user.id}</td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.mobile}</td>
-                  <td>
-
-                    <Link
-                      to={`user/${user.id}/edit`}
-                      className="btn btn-sm btn-warning me-2"
-                    >
-                      Edit
-                    </Link>
-
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => deleteUser(user.id)}
-                    >
-                      Delete
-                    </button>
-
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-        </div>
-      </div>
-
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5" className="text-center">
+                No users found...
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
-
 }

@@ -14,7 +14,7 @@ export default function CreateUser() {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        axios.post('http://localhost/php-for/', inputs);
+        axios.post('http://127.0.0.1:8000/api/user', inputs);
         console.log(inputs);
     }
 
